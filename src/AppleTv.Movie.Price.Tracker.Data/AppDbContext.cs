@@ -12,4 +12,9 @@ public class AppDbContext : DbContext
     public DbSet<AppleTv.Movie.Price.Tracker.Entities.Movie> Movies { get; set; }
 
     public DbSet<AppleTv.Movie.Price.Tracker.Entities.MoviePrice> MoviePrices { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+    }
 }

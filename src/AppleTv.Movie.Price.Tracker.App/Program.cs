@@ -8,13 +8,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(mvcOptions =>
+{
+    mvcOptions.Filters.Add<kr.bbon.AspNetCore.Filters.ApiExceptionHandlerFilter>();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddApiVersioningAndSwaggerGen(apiVersion);
 
-builder.Services.AddRequiredServices(builder.Configuration);
+builder.Services.AddRequiredServices();
+builder.Services.AddAppDbContext(builder.Configuration);
 builder.Services.AddMoviePriceCollectJbo(builder.Configuration);
+builder.Services.AddJsonOptions();
+builder.Services.AddMappingProfiles();
 
 var app = builder.Build();
 
@@ -32,6 +38,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await app.RunStartupJobsAync();
+//await app.RunStartupJobsAync();
 
 app.Run();
