@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppleTv.Movie.Price.Tracker.App", "src\AppleTv.Movie.Price.Tracker.App\AppleTv.Movie.Price.Tracker.App.csproj", "{3B615A36-EC55-4213-BA3E-5FF2A28A318F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppleTv.Movie.Price.Tracker.Data", "src\AppleTv.Movie.Price.Tracker.Data\AppleTv.Movie.Price.Tracker.Data.csproj", "{BD3747AE-5B92-4EE2-90AA-C558A83EAEDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppleTv.Movie.Price.Tracker.Entities", "src\AppleTv.Movie.Price.Tracker.Entities\AppleTv.Movie.Price.Tracker.Entities.csproj", "{51BD5161-15D4-46A3-9333-DD13D22F6BC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppleTv.Movie.Price.Tracker.Jobs", "src\AppleTv.Movie.Price.Tracker.Jobs\AppleTv.Movie.Price.Tracker.Jobs.csproj", "{7CD74A07-85E2-410B-B61B-6AC4BCB43571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppleTv.Movie.Price.Tracker.Services", "src\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj", "{F632CDC3-082A-44BC-AF78-A0698F5EC546}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppleTv.Movie.Price.Tracker.Data.SqlServer", "src\AppleTv.Movie.Price.Tracker.Data.SqlServer\AppleTv.Movie.Price.Tracker.Data.SqlServer.csproj", "{A670129C-8722-4503-9267-9A4F54246995}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B615A36-EC55-4213-BA3E-5FF2A28A318F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B615A36-EC55-4213-BA3E-5FF2A28A318F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B615A36-EC55-4213-BA3E-5FF2A28A318F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B615A36-EC55-4213-BA3E-5FF2A28A318F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD3747AE-5B92-4EE2-90AA-C558A83EAEDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD3747AE-5B92-4EE2-90AA-C558A83EAEDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD3747AE-5B92-4EE2-90AA-C558A83EAEDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD3747AE-5B92-4EE2-90AA-C558A83EAEDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51BD5161-15D4-46A3-9333-DD13D22F6BC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51BD5161-15D4-46A3-9333-DD13D22F6BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51BD5161-15D4-46A3-9333-DD13D22F6BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51BD5161-15D4-46A3-9333-DD13D22F6BC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CD74A07-85E2-410B-B61B-6AC4BCB43571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CD74A07-85E2-410B-B61B-6AC4BCB43571}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CD74A07-85E2-410B-B61B-6AC4BCB43571}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CD74A07-85E2-410B-B61B-6AC4BCB43571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F632CDC3-082A-44BC-AF78-A0698F5EC546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F632CDC3-082A-44BC-AF78-A0698F5EC546}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F632CDC3-082A-44BC-AF78-A0698F5EC546}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F632CDC3-082A-44BC-AF78-A0698F5EC546}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A670129C-8722-4503-9267-9A4F54246995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A670129C-8722-4503-9267-9A4F54246995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A670129C-8722-4503-9267-9A4F54246995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A670129C-8722-4503-9267-9A4F54246995}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
