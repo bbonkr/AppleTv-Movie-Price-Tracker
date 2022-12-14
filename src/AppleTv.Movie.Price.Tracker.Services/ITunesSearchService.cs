@@ -1,11 +1,10 @@
-﻿using System.Net.Http;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Threading;
 using AppleTv.Movie.Price.Tracker.Services.Models;
-using kr.bbon.Core.DataSets;
 using kr.bbon.Core.Exceptions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AppleTv.Movie.Price.Tracker.Services;
 
@@ -14,10 +13,11 @@ public class ITunesSearchService
     private const string SearchUrl = "https://itunes.apple.com/search";
     private const string LookupUrl = "https://itunes.apple.com/{0}/lookup";
 
-    public ITunesSearchService(HttpClient client, ILogger<ITunesSearchService> logger)
+    public ITunesSearchService(HttpClient client, IOptionsMonitor<JsonSerializerOptions> jsonSerializerOptionsAccessor, ILogger<ITunesSearchService> logger)
     {
         this.client = client;
         this.logger = logger;
+        this.jsonSerializerOptions = jsonSerializerOptionsAccessor.CurrentValue ?? throw new ArgumentNullException();
     }
 
     public async Task<ITunesSearchResultModel> SearchAsync(string term, string storeCountry, string language, int limit = 25, CancellationToken cancellationToken = default)
@@ -40,7 +40,7 @@ public class ITunesSearchService
         if (response.IsSuccessStatusCode)
         {
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            var result = JsonSerializer.Deserialize<ITunesSearchResultModel>(json) ?? new ITunesSearchResultModel { ResultCount = 0 };
+            var result = JsonSerializer.Deserialize<ITunesSearchResultModel>(json, jsonSerializerOptions) ?? new ITunesSearchResultModel { ResultCount = 0 };
 
             foreach (var item in result.results)
             {
@@ -69,14 +69,14 @@ public class ITunesSearchService
         List<string> queries = new();
         queries.Add($"id={id}");
 
-        var url = GenerateUrl(string.Format(SearchUrl, storeCountry.Trim().ToLower()), queries);
+        var url = GenerateUrl(string.Format(LookupUrl, storeCountry.Trim().ToLower()), queries);
 
         var response = await client.GetAsync(url);
 
         if (response.IsSuccessStatusCode)
         {
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
-            var result = JsonSerializer.Deserialize<ITunesSearchResultModel>(json) ?? new ITunesSearchResultModel { ResultCount = 0 };
+            var result = JsonSerializer.Deserialize<ITunesSearchResultModel>(json, jsonSerializerOptions) ?? new ITunesSearchResultModel { ResultCount = 0 };
 
             foreach (var item in result.results)
             {
@@ -117,6 +117,7 @@ public class ITunesSearchService
     }
 
     private readonly HttpClient client;
+    private readonly JsonSerializerOptions jsonSerializerOptions;
     private readonly ILogger logger;
 }
 
