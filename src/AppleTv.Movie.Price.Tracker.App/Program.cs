@@ -12,6 +12,7 @@ builder.Services.AddControllers(mvcOptions =>
 {
     mvcOptions.Filters.Add<kr.bbon.AspNetCore.Filters.ApiExceptionHandlerFilter>();
 });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddApiVersioningAndSwaggerGen(apiVersion);
@@ -27,12 +28,13 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwaggerUIWithApiVersioning();
 }
+    
+app.UseSwaggerUIWithApiVersioning();
 
 app.UseDatabaseMigration();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
