@@ -5,8 +5,10 @@ using AppleTv.Movie.Price.Tracker.Services.Models;
 using AutoMapper;
 using kr.bbon.AspNetCore;
 using kr.bbon.AspNetCore.Mvc;
+using kr.bbon.Core.Exceptions;
 using kr.bbon.EntityFrameworkCore.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppleTv.Movie.Price.Tracker.App.Controllers;
 
@@ -65,6 +67,28 @@ public class MoviesController : ApiControllerBase
         return Ok(result.results);
     }
 
+    [HttpGet]
+    [Route("lookup/{country}/{trackId:int}")]
+    public async Task<ActionResult<IEnumerable<ITunesSearchResultItemModel>>> Lookup([FromRoute] long trackId, [FromRoute] string country = "kr", [FromQuery] string language = "ko_kr")
+    {
+        if (string.IsNullOrWhiteSpace(country))
+        {
+            return BadRequest();
+        }
+
+        if (trackId < 1)
+        {
+            return BadRequest();
+        }
+
+
+        var result = await iTunesSearchService.LookupAsync(trackId, country, language);
+
+        return Ok(result.results);
+    }
+
+
+
     [HttpPost]
     [Route("track")]
     public async Task<IActionResult> Track([FromBody] TrackModel model)
@@ -79,10 +103,12 @@ public class MoviesController : ApiControllerBase
         var item = result.results.FirstOrDefault();
         if (item == null)
         {
-            return NotFound();
+            throw new ApiException(System.Net.HttpStatusCode.NotFound);
         }
 
-        var movie = appDbContext.Movies.Where(x => x.TrackId == model.Id).FirstOrDefault();
+        var movie = await appDbContext.Movies
+            .Where(x => x.TrackId == model.Id && x.CountryCode == model.Country && x.LanguageCode == model.Language)
+            .FirstOrDefaultAsync();
 
         if (movie != null)
         {
@@ -102,13 +128,19 @@ public class MoviesController : ApiControllerBase
 
             await appDbContext.SaveChangesAsync();
 
+            logger.LogInformation("Movie updated: {title} ({trackId};{country})", movie.TrackName, movie.TrackId, movie.Country);
+
             return Accepted();
         }
 
         var newMovie = mapper.Map<Entities.Movie>(item);
+
         appDbContext.Movies.Add(newMovie);
+
         await appDbContext.SaveChangesAsync();
 
+        logger.LogInformation("Movie added: {title} ({trackId};{country})", newMovie.TrackName, newMovie.TrackId, newMovie.Country);
+        
         return Accepted();
     }
 
