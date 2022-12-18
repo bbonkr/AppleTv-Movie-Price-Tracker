@@ -43,6 +43,22 @@ public class MoviesController : ApiControllerBase
         return Ok(result);
     }
 
+    [HttpGet("collections")]
+    public async Task<ActionResult<IEnumerable<Entities.Movie>>> GetCollections([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string keyword = "")
+    {
+        var query = appDbContext.Collections.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            query = query.Where(x => x.CollectionName.Contains(keyword) || x.CollectionCensoredName.Contains(keyword));
+        }
+
+        var result = await query.OrderBy(x => x.CollectionName)
+            .ToPagedModelAsync(page, limit);
+
+        return Ok(result);
+    }
+
     [HttpGet]
     [Route("search")]
     public async Task<ActionResult<IEnumerable<ITunesSearchResultItemModel>>> Search([FromQuery] string term, [FromQuery] string country = "kr", [FromQuery] string language = "ko_kr")
@@ -110,9 +126,11 @@ public class MoviesController : ApiControllerBase
             .Where(x => x.TrackId == model.Id && x.CountryCode == model.Country && x.LanguageCode == model.Language)
             .FirstOrDefaultAsync();
 
+        Guid movieId;
+
         if (movie != null)
         {
-            var movieId = movie.Id;
+            movieId = movie.Id;
 
             movie.ArtistName = item.ArtistName;
             movie.ArtworkUrl100 = item.ArtworkUrl100;
@@ -129,18 +147,104 @@ public class MoviesController : ApiControllerBase
             await appDbContext.SaveChangesAsync();
 
             logger.LogInformation("Movie updated: {title} ({trackId};{country})", movie.TrackName, movie.TrackId, movie.Country);
+        }
+        else
+        {
 
-            return Accepted();
+            movie = mapper.Map<Entities.Movie>(item);
+
+            var added = appDbContext.Movies.Add(movie);
+
+            movieId = added.Entity.Id;
+
+            await appDbContext.SaveChangesAsync();
+
+            logger.LogInformation("Movie added: {title} ({trackId};{country})", movie.TrackName, movie.TrackId, movie.Country);
         }
 
-        var newMovie = mapper.Map<Entities.Movie>(item);
+        if (item.CollectionId > 0)
+        {
+            Guid collectionId;
 
-        appDbContext.Movies.Add(newMovie);
+            var collection = await appDbContext.Collections
+                .Where(x => x.CollectionId == item.CollectionId)
+                .FirstOrDefaultAsync();
+
+            if (collection == null)
+            {
+                collection = new()
+                {
+                    CollectionArtistId = item.CollectionArtistId,
+                    CollectionArtistViewUrl = item.CollectionArtistViewUrl,
+                    CollectionCensoredName = item.CollectionCensoredName,
+                    CollectionHdPrice = item.CollectionHdPrice,
+                    CollectionId = item.CollectionId,
+                    CollectionName = item.CollectionName,
+                    CollectionPrice = item.CollectionPrice,
+                    CollectionViewUrl = item.CollectionViewUrl,
+                };
+
+                var addedCollection = appDbContext.Collections.Add(collection);
+                collectionId = addedCollection.Entity.Id;
+            }
+            else
+            {
+                collection.CollectionArtistId = item.CollectionArtistId;
+                collection.CollectionArtistViewUrl = item.CollectionArtistViewUrl;
+                collection.CollectionCensoredName = item.CollectionCensoredName;
+                collection.CollectionHdPrice = item.CollectionHdPrice;
+                collection.CollectionId = item.CollectionId;
+                collection.CollectionName = item.CollectionName;
+                collection.CollectionPrice = item.CollectionPrice;
+                collection.CollectionViewUrl = item.CollectionViewUrl;
+
+                collectionId = collection.Id;
+            }
+
+            await appDbContext.SaveChangesAsync();
+
+            var collectionMovie = await appDbContext.CollectionMovies
+                .Where(x => x.MovieId == movieId && x.CollectionId == collectionId)
+                .FirstOrDefaultAsync();
+
+            if (collectionMovie == null)
+            {
+                appDbContext.CollectionMovies.Add(new()
+                {
+                    CollectionId = collectionId,
+                    MovieId = movieId,
+                });
+
+                await appDbContext.SaveChangesAsync();
+            }
+        }
+
+        return Accepted();
+    }
+
+    [HttpDelete()]
+    [Route("{movieId:guid}/untrack")]
+    public async Task<IActionResult> Untrack([FromRoute] Guid movieId)
+    {
+        var movie = await appDbContext.Movies.Where(x => x.Id == movieId).FirstOrDefaultAsync();
+
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        var collectionMovies = appDbContext.CollectionMovies
+            .Where(x => x.MovieId == movie.Id);
+
+        foreach (var item in collectionMovies)
+        {
+            appDbContext.CollectionMovies.Remove(item);
+        }
+
+        appDbContext.Movies.Remove(movie);
 
         await appDbContext.SaveChangesAsync();
 
-        logger.LogInformation("Movie added: {title} ({trackId};{country})", newMovie.TrackName, newMovie.TrackId, newMovie.Country);
-        
         return Accepted();
     }
 
