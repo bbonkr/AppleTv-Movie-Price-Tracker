@@ -6,14 +6,14 @@ public class Movie
 
     public string WrapperType { get; set; } = "";
     public string Kind { get; set; } = "";
-    public int CollectionId { get; set; }
-    public int TrackId { get; set; }
+    public long CollectionId { get; set; }
+    public long TrackId { get; set; }
     public string ArtistName { get; set; } = "";
     public string CollectionName { get; set; } = "";
     public string TrackName { get; set; } = "";
     public string CollectionCensoredName { get; set; } = "";
     public string TrackCensoredName { get; set; } = "";
-    public int CollectionArtistId { get; set; }
+    public long CollectionArtistId { get; set; }
     public string CollectionArtistViewUrl { get; set; } = "";
     public string CollectionViewUrl { get; set; } = "";
     public string TrackViewUrl { get; set; } = "";
@@ -40,7 +40,7 @@ public class Movie
     public int DiscNumber { get; set; }
     public int TrackCount { get; set; }
     public int TrackNumber { get; set; }
-    public int TrackTimeMillis { get; set; }
+    public long TrackTimeMillis { get; set; }
     public string Country { get; set; } = "";
     public string Currency { get; set; } = "";
     public string PrimaryGenreName { get; set; } = "";
@@ -51,5 +51,7 @@ public class Movie
     public string CountryCode { get; set; } = "";
     public string LanguageCode { get; set; } = "";
 
-    public virtual ICollection<MoviePrice> TrackingLogs { get; set; } = new List<MoviePrice>();
+    public virtual ICollection<MoviePrice> TrackingLogs { get; set; } = new HashSet<MoviePrice>();
+
+    public virtual ICollection<CollectionMovie> CollectionMovies { get; set; } = new HashSet<CollectionMovie>();
 }
