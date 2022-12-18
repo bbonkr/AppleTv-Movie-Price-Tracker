@@ -22,9 +22,11 @@ public static class WebApplicationExtensions
 
         builder.UseSwaggerUIWithApiVersioning(options =>
         {
-
-            options.OAuthClientId(identityServerOptions.SwaggerClient.Id);
-            options.OAuthAppName(identityServerOptions.SwaggerClient.Name);
+            if (identityServerOptions.SwaggerClient != null)
+            {
+                options.OAuthClientId(identityServerOptions.SwaggerClient.Id);
+                options.OAuthAppName(identityServerOptions.SwaggerClient.Name);
+            }
 
             options.OAuthScopeSeparator(" ");
             options.OAuthUsePkce();

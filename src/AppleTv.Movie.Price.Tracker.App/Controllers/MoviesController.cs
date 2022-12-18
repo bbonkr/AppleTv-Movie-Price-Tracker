@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AppleTv.Movie.Price.Tracker.Data;
+using AppleTv.Movie.Price.Tracker.Domains.Movies.Models;
+using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.GetMovies;
 using AppleTv.Movie.Price.Tracker.Services;
 using AppleTv.Movie.Price.Tracker.Services.Models;
 using AutoMapper;
@@ -7,6 +9,7 @@ using kr.bbon.AspNetCore;
 using kr.bbon.AspNetCore.Mvc;
 using kr.bbon.Core.Exceptions;
 using kr.bbon.EntityFrameworkCore.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +24,9 @@ namespace AppleTv.Movie.Price.Tracker.App.Controllers;
 public class MoviesController : ApiControllerBase
 {
 
-    public MoviesController(AppDbContext appDbContext, ITunesSearchService iTunesSearchService, IMapper mapper, ILogger<MoviesController> logger)
+    public MoviesController(IMediator mediator, AppDbContext appDbContext, ITunesSearchService iTunesSearchService, IMapper mapper, ILogger<MoviesController> logger)
     {
+        this.mediator = mediator;
         this.appDbContext = appDbContext;
         this.iTunesSearchService = iTunesSearchService;
         this.mapper = mapper;
@@ -30,17 +34,9 @@ public class MoviesController : ApiControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Entities.Movie>>> GetMovies([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string keyword = "")
+    public async Task<ActionResult<MoviesPagedModel>> GetMovies([FromQuery] GetMoviesQuery query)
     {
-        var query = appDbContext.Movies.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            query = query.Where(x => x.TrackName.Contains(keyword) || x.ArtistName.Contains(keyword) || x.CollectionName.Contains(keyword));
-        }
-
-        var result = await query.OrderByDescending(x => x.ReleaseDate)
-            .ToPagedModelAsync(page, limit);
+        var result = await mediator.Send(query);
 
         return Ok(result);
     }
@@ -250,6 +246,7 @@ public class MoviesController : ApiControllerBase
         return Accepted();
     }
 
+    private readonly IMediator mediator;
     private readonly AppDbContext appDbContext;
     private readonly ITunesSearchService iTunesSearchService;
     private readonly IMapper mapper;

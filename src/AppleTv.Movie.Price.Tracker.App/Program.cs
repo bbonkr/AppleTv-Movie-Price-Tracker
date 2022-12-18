@@ -1,6 +1,7 @@
 using AppleTv.Movie.Price.Tracker.App.Extensions.DependencyInjection;
 using AppleTv.Movie.Price.Tracker.App.Options;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 ApiVersion apiVersion = new(1, 0);
@@ -34,7 +35,9 @@ builder.Services
     .AddValidatorIntercepter()
     .AddIdentityServerAuthentication()
     //.AddApiVersioningAndSwaggerGen(apiVersion)
-    .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions);
+    .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions)
+    .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
+    .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly });
 
 var app = builder.Build();
 

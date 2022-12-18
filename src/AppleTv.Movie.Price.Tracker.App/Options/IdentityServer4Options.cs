@@ -13,7 +13,7 @@ namespace AppleTv.Movie.Price.Tracker.App.Options
 
         public string ClientSecret { get; set; } = "";
 
-        public SwaggerClient SwaggerClient { get; set; }
+        public SwaggerClient? SwaggerClient { get; set; }
     }
 }
 
