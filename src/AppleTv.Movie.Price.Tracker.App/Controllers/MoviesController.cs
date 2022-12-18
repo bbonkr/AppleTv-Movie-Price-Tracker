@@ -7,11 +7,13 @@ using kr.bbon.AspNetCore;
 using kr.bbon.AspNetCore.Mvc;
 using kr.bbon.Core.Exceptions;
 using kr.bbon.EntityFrameworkCore.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppleTv.Movie.Price.Tracker.App.Controllers;
 
+[Authorize]
 [ApiController]
 [Area(DefaultValues.AreaName)]
 [Route(DefaultValues.RouteTemplate)]

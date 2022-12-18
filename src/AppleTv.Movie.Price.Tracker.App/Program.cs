@@ -1,27 +1,40 @@
 using AppleTv.Movie.Price.Tracker.App.Extensions.DependencyInjection;
+using AppleTv.Movie.Price.Tracker.App.Options;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 
-var apiVersion = new ApiVersion(1, 0);
+ApiVersion apiVersion = new(1, 0);
+IdentityServerOptions identityServerOptions = new();
+CorsOptions corsOptions = new();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.GetSection(CorsOptions.Name).Bind(corsOptions);
+builder.Configuration.GetSection(IdentityServerOptions.Name).Bind(identityServerOptions);
+
 // Add services to the container.
+
+builder.Services.ConfigureAppOptions();
 
 builder.Services.AddControllers(mvcOptions =>
 {
     mvcOptions.Filters.Add<kr.bbon.AspNetCore.Filters.ApiExceptionHandlerFilter>();
-});
+}).ConfigureCustomApiBehaviorOptions();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddApiVersioningAndSwaggerGen(apiVersion);
 
-builder.Services.AddRequiredServices();
-builder.Services.AddAppDbContext(builder.Configuration);
-builder.Services.AddMoviePriceCollectJbo(builder.Configuration);
-builder.Services.AddJsonOptions();
-builder.Services.AddMappingProfiles();
+builder.Services
+    .AddCorsPolocy(corsOptions)
+    .AddRequiredServices()
+    .AddAppDbContext(builder.Configuration)
+    .AddMoviePriceCollectJbo(builder.Configuration)
+    .AddJsonOptions()
+    .AddEndpointsApiExplorer()
+    .AddMappingProfiles()
+    .AddValidatorIntercepter()
+    .AddIdentityServerAuthentication()
+    //.AddApiVersioningAndSwaggerGen(apiVersion)
+    .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions);
 
 var app = builder.Build();
 
@@ -29,16 +42,20 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
 }
-    
-app.UseSwaggerUIWithApiVersioning();
 
-app.UseDatabaseMigration();
+//app.UseSwaggerUIWithApiVersioning();
+app.UseSwaggerUIWithIdentityServer()
+    .UseDatabaseMigration();
 
 // app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseCors(Constants.DEFAULT_CORS_POLICY);
+
+app.MapControllers()
+    .RequireAuthorization();
 
 //await app.RunStartupJobsAync();
 
