@@ -1,12 +1,12 @@
-﻿using System;
+using AppleTv.Movie.Price.Tracker.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppleTv.Movie.Price.Tracker.Data.EntityTypeConfigurations;
 
-public class MovieEntityTypeConfiguration : IEntityTypeConfiguration<AppleTv.Movie.Price.Tracker.Entities.Movie>
+public class MoviePriceTypeConfiguration : IEntityTypeConfiguration<Entities.MoviePrice>
 {
-    public void Configure(EntityTypeBuilder<Entities.Movie> builder)
+    public void Configure(EntityTypeBuilder<MoviePrice> builder)
     {
         builder.HasKey(x => x.Id);
 
@@ -14,6 +14,10 @@ public class MovieEntityTypeConfiguration : IEntityTypeConfiguration<AppleTv.Mov
             .IsRequired()
             .HasConversion<string>()
             .ValueGeneratedOnAdd();
+
+        builder.HasOne(x => x.Movie)
+            .WithMany(x => x.TrackingLogs)
+            .HasForeignKey(x => x.MovieId);
 
         builder.Property(x => x.TrackPrice)
         .IsRequired()
@@ -50,5 +54,6 @@ public class MovieEntityTypeConfiguration : IEntityTypeConfiguration<AppleTv.Mov
         .HasColumnType("decimal(18,5)")
         .HasConversion<decimal>()
         .HasDefaultValue(0);
+
     }
 }
