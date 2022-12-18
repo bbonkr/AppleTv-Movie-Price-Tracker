@@ -11,7 +11,8 @@
     <None Remove="EntityTypeConfigurations\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.1" />
+    <PackageReference Include="kr.bbon.EntityFrameworkCore.Extensions" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Entities\AppleTv.Movie.Price.Tracker.Entities.csproj" />

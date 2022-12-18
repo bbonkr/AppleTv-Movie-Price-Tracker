@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="11.1.0" />
+    <PackageReference Include="FluentValidation" Version="11.4.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Movies\" />
+    <None Remove="MovieCollections\" />
+    <None Remove="Movies\Commands\" />
+    <None Remove="Movies\Queries\" />
+    <None Remove="Movies\Models\" />
+    <None Remove="MovieCollections\Commands\" />
+    <None Remove="MovieCollections\Models\" />
+    <None Remove="MovieCollections\Queries\" />
+    <None Remove="Models\" />
+    <None Remove="MappingProfiles\" />
+    <None Remove="Movies\Queries\GetMovies\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Movies\" />
+    <Folder Include="MovieCollections\" />
+    <Folder Include="Movies\Commands\" />
+    <Folder Include="Movies\Queries\" />
+    <Folder Include="Movies\Models\" />
+    <Folder Include="MovieCollections\Commands\" />
+    <Folder Include="MovieCollections\Models\" />
+    <Folder Include="MovieCollections\Queries\" />
+    <Folder Include="Models\" />
+    <Folder Include="MappingProfiles\" />
+    <Folder Include="Movies\Queries\GetMovies\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Data.SqlServer\AppleTv.Movie.Price.Tracker.Data.SqlServer.csproj" />
+    <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj" />
+  </ItemGroup>
+</Project>
