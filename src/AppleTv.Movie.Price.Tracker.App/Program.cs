@@ -1,3 +1,4 @@
+using AppleTv.Movie.Price.Tracker.App;
 using AppleTv.Movie.Price.Tracker.App.Extensions.DependencyInjection;
 using AppleTv.Movie.Price.Tracker.App.Options;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
@@ -20,7 +21,9 @@ builder.Services.ConfigureAppOptions();
 builder.Services.AddControllers(mvcOptions =>
 {
     mvcOptions.Filters.Add<kr.bbon.AspNetCore.Filters.ApiExceptionHandlerFilter>();
-}).ConfigureCustomApiBehaviorOptions();
+})
+    .ConfigureCustomApiBehaviorOptions()
+    .ConfigureDefaultXmlOptions();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 

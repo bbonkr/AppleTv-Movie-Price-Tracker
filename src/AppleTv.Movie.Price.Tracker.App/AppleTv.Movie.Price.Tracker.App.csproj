@@ -16,11 +16,12 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="kr.bbon.AspNetCore" Version="1.4.0" />
-		<PackageReference Include="kr.bbon.EntityFrameworkCore.Extensions" Version="1.5.0" />
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
+			Version="12.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
-		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection"
+			Version="11.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Extensions\" />
@@ -46,24 +47,29 @@
 		<Folder Include="Infrastructure\Validations\" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Jobs\AppleTv.Movie.Price.Tracker.Jobs.csproj">
+		<ProjectReference
+			Include="..\AppleTv.Movie.Price.Tracker.Jobs\AppleTv.Movie.Price.Tracker.Jobs.csproj">
 			<GlobalPropertiesToRemove>
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
-		<ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Data\AppleTv.Movie.Price.Tracker.Data.csproj">
+		<ProjectReference
+			Include="..\AppleTv.Movie.Price.Tracker.Data\AppleTv.Movie.Price.Tracker.Data.csproj">
 			<GlobalPropertiesToRemove>
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
-		<ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj">
+		<ProjectReference
+			Include="..\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj">
 			<GlobalPropertiesToRemove>
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
-		<ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Data.SqlServer\AppleTv.Movie.Price.Tracker.Data.SqlServer.csproj">
+		<ProjectReference
+			Include="..\AppleTv.Movie.Price.Tracker.Data.SqlServer\AppleTv.Movie.Price.Tracker.Data.SqlServer.csproj">
 			<GlobalPropertiesToRemove>
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
-		<ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Domains\AppleTv.Movie.Price.Tracker.Domains.csproj">
-		  <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+		<ProjectReference
+			Include="..\AppleTv.Movie.Price.Tracker.Domains\AppleTv.Movie.Price.Tracker.Domains.csproj">
+			<GlobalPropertiesToRemove></GlobalPropertiesToRemove>
 		</ProjectReference>
 	</ItemGroup>
 </Project>

@@ -52,18 +52,27 @@ public static class MvcBuilderExtensions
     {
         builder.AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-            options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-            options.JsonSerializerOptions.DictionaryKeyPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.AllowTrailingCommas = true;
-            options.JsonSerializerOptions.IgnoreReadOnlyFields = true;
-            options.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
+            // options.JsonSerializerOptions.IgnoreReadOnlyFields = true;
+            // options.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
             options.JsonSerializerOptions.WriteIndented = true;
-            options.JsonSerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals;
+            options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            options.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+            // options.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
+
+        return builder;
+    }
+
+    public static IMvcBuilder ConfigureDefaultXmlOptions(this IMvcBuilder builder)
+    {
+        builder.AddXmlSerializerFormatters();
+        builder.AddXmlDataContractSerializerFormatters();
+        // builder.AddXmlOptions();
 
         return builder;
     }
