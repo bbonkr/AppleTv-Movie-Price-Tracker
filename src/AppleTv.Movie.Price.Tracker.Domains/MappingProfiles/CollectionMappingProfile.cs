@@ -9,6 +9,8 @@ public class CollectionMappingProfile : Profile
     {
         CreateMap<Entities.Collection, CollectionModel>()
             .ReverseMap();
+
+        CreateMap<Entities.Collection, CollectionListItemModel>();
     }
 }
 

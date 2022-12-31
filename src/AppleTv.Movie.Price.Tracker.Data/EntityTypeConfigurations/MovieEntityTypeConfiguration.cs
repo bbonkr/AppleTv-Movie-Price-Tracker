@@ -1,4 +1,5 @@
 ﻿using System;
+using AppleTv.Movie.Price.Tracker.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

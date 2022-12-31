@@ -1,4 +1,7 @@
-﻿namespace AppleTv.Movie.Price.Tracker.Entities;
+﻿using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+
+namespace AppleTv.Movie.Price.Tracker.Entities;
 
 public class Movie
 {
@@ -54,4 +57,6 @@ public class Movie
     public virtual ICollection<MoviePrice> TrackingLogs { get; set; } = new HashSet<MoviePrice>();
 
     public virtual ICollection<CollectionMovie> CollectionMovies { get; set; } = new HashSet<CollectionMovie>();
+
+    public virtual ICollection<Collection> Collections { get; set; } = new HashSet<Collection>();
 }

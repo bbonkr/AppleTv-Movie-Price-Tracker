@@ -1,6 +1,6 @@
-namespace AppleTv.Movie.Price.Tracker.Entities;
+namespace AppleTv.Movie.Price.Tracker.Domains.Models;
 
-public class Collection
+public class CollectionListItemModel
 {
     public Guid Id { get; set; }
 
@@ -17,8 +17,4 @@ public class Collection
     public decimal CollectionPrice { get; set; }
 
     public decimal CollectionHdPrice { get; set; }
-
-    public virtual ICollection<CollectionMovie> CollectionMovies { get; set; } = new HashSet<CollectionMovie>();
-
-    public virtual ICollection<Movie> Movies { get; set; } = new HashSet<Movie>();
 }

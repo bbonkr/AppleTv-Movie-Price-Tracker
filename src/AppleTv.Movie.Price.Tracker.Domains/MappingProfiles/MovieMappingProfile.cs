@@ -15,7 +15,9 @@ public class MovieMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<Entities.Movie, MovieModel>()
-                .ReverseMap();
+            .ReverseMap();
+
+        CreateMap<Entities.Movie, MovieListItemModel>();
 
         CreateMap<PagedModel<MovieModel>, MoviesPagedModel>();
     }

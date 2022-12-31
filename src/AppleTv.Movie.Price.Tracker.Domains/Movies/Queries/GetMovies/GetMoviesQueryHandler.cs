@@ -23,6 +23,7 @@ public class GetMoviesQueryHandler : IRequestHandler<GetMoviesQuery, MoviesPaged
         var keyword = request.Keyword?.Trim() ?? string.Empty;
 
         var result = await context.Movies
+            .Include(x => x.Collections)
             .WhereDependsOn(
                 !string.IsNullOrWhiteSpace(keyword),
                 x => x.TrackName.Contains(keyword) ||
