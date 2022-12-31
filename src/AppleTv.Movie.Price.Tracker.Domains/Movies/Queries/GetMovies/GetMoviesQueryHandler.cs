@@ -33,13 +33,11 @@ public class GetMoviesQueryHandler : IRequestHandler<GetMoviesQuery, MoviesPaged
                         x.CollectionName.Contains(keyword))
             .OrderByDescending(x => x.ReleaseDate)
                 .ThenBy(x => x.TrackName)
-            .Select(x => mapper.Map<MovieModel>(x))
+            .Select(x => mapper.Map<MovieListItemModel>(x))
             .AsNoTracking()
-            .ToPagedModelAsync(page: request.Page, request.Limit, cancellationToken);
+            .ToPagedModelAsync<MovieListItemModel, MoviesPagedModel>(page: request.Page, request.Limit, cancellationToken);
 
-        var moviesPagedModel = mapper.Map<MoviesPagedModel>(result);
-
-        return moviesPagedModel;
+        return result;
     }
 
     private readonly AppDbContext context;

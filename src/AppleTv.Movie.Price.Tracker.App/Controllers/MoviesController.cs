@@ -8,7 +8,6 @@ using AutoMapper;
 using kr.bbon.AspNetCore;
 using kr.bbon.AspNetCore.Mvc;
 using kr.bbon.Core.Exceptions;
-using kr.bbon.EntityFrameworkCore.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +20,9 @@ namespace AppleTv.Movie.Price.Tracker.App.Controllers;
 [Area(DefaultValues.AreaName)]
 [Route(DefaultValues.RouteTemplate)]
 [ApiVersion(DefaultValues.ApiVersion)]
+[Produces(Constants.RESPONSE_MEDIA_TYPE)]
 public class MoviesController : ApiControllerBase
 {
-
     public MoviesController(IMediator mediator, AppDbContext appDbContext, ITunesSearchService iTunesSearchService, IMapper mapper, ILogger<MoviesController> logger)
     {
         this.mediator = mediator;
@@ -41,21 +40,7 @@ public class MoviesController : ApiControllerBase
         return Ok(result);
     }
 
-    [HttpGet("collections")]
-    public async Task<ActionResult<IEnumerable<Entities.Movie>>> GetCollections([FromQuery] int page = 1, [FromQuery] int limit = 10, [FromQuery] string keyword = "")
-    {
-        var query = appDbContext.Collections.AsQueryable();
 
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            query = query.Where(x => x.CollectionName.Contains(keyword) || x.CollectionCensoredName.Contains(keyword));
-        }
-
-        var result = await query.OrderBy(x => x.CollectionName)
-            .ToPagedModelAsync(page, limit);
-
-        return Ok(result);
-    }
 
     [HttpGet]
     [Route("search")]

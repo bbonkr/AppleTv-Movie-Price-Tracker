@@ -14,12 +14,10 @@ public class MovieMappingProfile : Profile
         CreateMap<Entities.Movie, ITunesSearchResultItemModel>()
             .ReverseMap();
 
-        CreateMap<Entities.Movie, MovieModel>()
-            .ReverseMap();
+        CreateMap<Entities.Movie, MovieModel>();
 
         CreateMap<Entities.Movie, MovieListItemModel>();
 
-        CreateMap<PagedModel<MovieModel>, MoviesPagedModel>();
     }
 }
 

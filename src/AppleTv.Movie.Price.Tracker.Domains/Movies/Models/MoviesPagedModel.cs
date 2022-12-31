@@ -4,7 +4,7 @@ using kr.bbon.Core.Models;
 
 namespace AppleTv.Movie.Price.Tracker.Domains.Movies.Models;
 
-public class MoviesPagedModel : PagedModel<MovieModel>
+public class MoviesPagedModel : PagedModel<MovieListItemModel>
 {
 
 }
