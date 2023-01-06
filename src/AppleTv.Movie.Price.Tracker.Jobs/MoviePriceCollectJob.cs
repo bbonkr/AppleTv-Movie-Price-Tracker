@@ -36,7 +36,7 @@ public class MoviePriceCollectJob : IScheduledJob
             {
                 foreach (var movie in movies)
                 {
-                    var result = await iTunesSearchService.LookupAsync(movie.TrackId, movie.CountryCode, movie.LanguageCode, cancellationToken);
+                    var result = await iTunesSearchService.LookupMovieAsync(movie.TrackId, movie.CountryCode, movie.LanguageCode, cancellationToken);
 
                     foreach (var item in result.results)
                     {

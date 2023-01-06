@@ -2,6 +2,7 @@
 using AppleTv.Movie.Price.Tracker.Data;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Models;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.GetMovies;
+using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.SearchMovies;
 using AppleTv.Movie.Price.Tracker.Services;
 using AppleTv.Movie.Price.Tracker.Services.Models;
 using AutoMapper;
@@ -40,34 +41,25 @@ public class MoviesController : ApiControllerBase
         return Ok(result);
     }
 
-
-
+    /// <summary>
+    /// Search movies on iTunes (Apple TV movies)
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
+    /// <example>
+    /// GET: /movies/search?term=top+gun&country=kr&language=ko_kr
+    /// </example>
     [HttpGet]
     [Route("search")]
-    public async Task<ActionResult<IEnumerable<ITunesSearchResultItemModel>>> Search([FromQuery] string term, [FromQuery] string country = "kr", [FromQuery] string language = "ko_kr")
+    public async Task<ActionResult<MovieSearchPagedModel>> Search([FromQuery] SearchMoviesQuery query)
     {
-        if (string.IsNullOrWhiteSpace(term))
-        {
-            return BadRequest();
-        }
+        var result = await mediator.Send(query);
 
-        if (string.IsNullOrWhiteSpace(country))
-        {
-            return BadRequest();
-        }
-
-        if (string.IsNullOrWhiteSpace(language))
-        {
-            return BadRequest();
-        }
-
-        var result = await iTunesSearchService.SearchAsync(term, country, language);
-
-        return Ok(result.results);
+        return Ok(result);
     }
 
     [HttpGet]
-    [Route("lookup/{country}/{trackId:int}")]
+    [Route("lookup/{country}/{trackId:long}")]
     public async Task<ActionResult<IEnumerable<ITunesSearchResultItemModel>>> Lookup([FromRoute] long trackId, [FromRoute] string country = "kr", [FromQuery] string language = "ko_kr")
     {
         if (string.IsNullOrWhiteSpace(country))
@@ -81,7 +73,7 @@ public class MoviesController : ApiControllerBase
         }
 
 
-        var result = await iTunesSearchService.LookupAsync(trackId, country, language);
+        var result = await iTunesSearchService.LookupMovieAsync(trackId, country, language);
 
         return Ok(result.results);
     }
@@ -97,7 +89,7 @@ public class MoviesController : ApiControllerBase
             return BadRequest();
         }
 
-        var result = await iTunesSearchService.LookupAsync(model.Id, model.Country, model.Language);
+        var result = await iTunesSearchService.LookupMovieAsync(model.Id, model.Country, model.Language);
 
         var item = result.results.FirstOrDefault();
         if (item == null)
