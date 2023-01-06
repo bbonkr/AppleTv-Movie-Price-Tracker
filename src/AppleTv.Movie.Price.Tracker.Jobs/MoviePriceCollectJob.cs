@@ -38,10 +38,10 @@ public class MoviePriceCollectJob : IScheduledJob
                 {
                     var result = await iTunesSearchService.LookupMovieAsync(movie.TrackId, movie.CountryCode, movie.LanguageCode, cancellationToken);
 
-                    foreach (var item in result.results)
+                    if (result != null)
                     {
                         var local = movie.TrackingLogs.Any() ? ConvertPrice(movie.TrackingLogs.First()) : ConvertPrice(movie);
-                        var remote = ConvertPrice(item);
+                        var remote = ConvertPrice(result);
 
                         var diff = DiffBetweenSourceAndRemote(local, remote);
 
@@ -53,12 +53,12 @@ public class MoviePriceCollectJob : IScheduledJob
                             movie.TrackingLogs.Add(new MoviePrice
                             {
                                 MovieId = movie.Id,
-                                CollectionPrice = item.CollectionPrice,
-                                CollectionHdPrice = item.CollectionHdPrice,
-                                TrackPrice = item.TrackPrice,
-                                TrackHdPrice = item.TrackHdPrice,
-                                TrackRentalPrice = item.TrackRentalPrice,
-                                TrackHdRentalPrice = item.TrackHdRentalPrice,
+                                CollectionPrice = result.CollectionPrice,
+                                CollectionHdPrice = result.CollectionHdPrice,
+                                TrackPrice = result.TrackPrice,
+                                TrackHdPrice = result.TrackHdPrice,
+                                TrackRentalPrice = result.TrackRentalPrice,
+                                TrackHdRentalPrice = result.TrackHdRentalPrice,
                             });
 
                             logger.LogInformation(@"[{className}][{methodName}] {MovieTitle}

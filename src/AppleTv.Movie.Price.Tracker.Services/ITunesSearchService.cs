@@ -68,7 +68,7 @@ public class ITunesSearchService
         }
     }
 
-    public async Task<ITunesSearchResultModel> LookupMovieAsync(long id, string storeCountry, string language, CancellationToken cancellationToken = default)
+    public async Task<ITunesSearchResultItemModel?> LookupMovieAsync(long id, string storeCountry, string language, CancellationToken cancellationToken = default)
     {
         var storeCountryCode = storeCountry.Trim().ToLower();
         var languageCode = language.Trim().Replace('-', '_');
@@ -93,7 +93,7 @@ public class ITunesSearchService
                 item.LanguageCode = languageCode;
             }
 
-            return result;
+            return result.results.FirstOrDefault();
         }
         else
         {

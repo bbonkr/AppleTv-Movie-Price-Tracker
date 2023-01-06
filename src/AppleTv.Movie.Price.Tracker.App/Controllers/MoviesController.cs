@@ -2,6 +2,7 @@
 using AppleTv.Movie.Price.Tracker.Data;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Models;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.GetMovies;
+using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.LookupMovie;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.SearchMovies;
 using AppleTv.Movie.Price.Tracker.Services;
 using AppleTv.Movie.Price.Tracker.Services.Models;
@@ -46,9 +47,6 @@ public class MoviesController : ApiControllerBase
     /// </summary>
     /// <param name="query"></param>
     /// <returns></returns>
-    /// <example>
-    /// GET: /movies/search?term=top+gun&country=kr&language=ko_kr
-    /// </example>
     [HttpGet]
     [Route("search")]
     public async Task<ActionResult<MovieSearchPagedModel>> Search([FromQuery] SearchMoviesQuery query)
@@ -60,25 +58,16 @@ public class MoviesController : ApiControllerBase
 
     [HttpGet]
     [Route("lookup/{country}/{trackId:long}")]
-    public async Task<ActionResult<IEnumerable<ITunesSearchResultItemModel>>> Lookup([FromRoute] long trackId, [FromRoute] string country = "kr", [FromQuery] string language = "ko_kr")
+    public async Task<ActionResult<ITunesSearchResultItemModel>> Lookup([FromRoute] string country, [FromRoute] long trackId, [FromQuery] string language)
     {
-        if (string.IsNullOrWhiteSpace(country))
+        LookupMovieQuery query = new(trackId, country)
         {
-            return BadRequest();
-        }
+            Language = language,
+        };
+        var result = await mediator.Send(query);
 
-        if (trackId < 1)
-        {
-            return BadRequest();
-        }
-
-
-        var result = await iTunesSearchService.LookupMovieAsync(trackId, country, language);
-
-        return Ok(result.results);
+        return Ok(result);
     }
-
-
 
     [HttpPost]
     [Route("track")]
@@ -91,8 +80,7 @@ public class MoviesController : ApiControllerBase
 
         var result = await iTunesSearchService.LookupMovieAsync(model.Id, model.Country, model.Language);
 
-        var item = result.results.FirstOrDefault();
-        if (item == null)
+        if (result == null)
         {
             throw new ApiException(System.Net.HttpStatusCode.NotFound);
         }
@@ -107,17 +95,17 @@ public class MoviesController : ApiControllerBase
         {
             movieId = movie.Id;
 
-            movie.ArtistName = item.ArtistName;
-            movie.ArtworkUrl100 = item.ArtworkUrl100;
-            movie.ArtworkUrl30 = item.ArtworkUrl30;
-            movie.ArtworkUrl60 = item.ArtworkUrl60;
-            movie.ArtworkUrlBase = item.ArtworkUrlBase;
-            movie.CollectionPrice = item.CollectionPrice;
-            movie.CollectionHdPrice = item.CollectionHdPrice;
-            movie.TrackPrice = item.TrackPrice;
-            movie.TrackHdPrice = item.TrackHdPrice;
-            movie.TrackRentalPrice = item.TrackRentalPrice;
-            movie.TrackHdRentalPrice = item.TrackHdRentalPrice;
+            movie.ArtistName = result.ArtistName;
+            movie.ArtworkUrl100 = result.ArtworkUrl100;
+            movie.ArtworkUrl30 = result.ArtworkUrl30;
+            movie.ArtworkUrl60 = result.ArtworkUrl60;
+            movie.ArtworkUrlBase = result.ArtworkUrlBase;
+            movie.CollectionPrice = result.CollectionPrice;
+            movie.CollectionHdPrice = result.CollectionHdPrice;
+            movie.TrackPrice = result.TrackPrice;
+            movie.TrackHdPrice = result.TrackHdPrice;
+            movie.TrackRentalPrice = result.TrackRentalPrice;
+            movie.TrackHdRentalPrice = result.TrackHdRentalPrice;
 
             await appDbContext.SaveChangesAsync();
 
@@ -126,7 +114,7 @@ public class MoviesController : ApiControllerBase
         else
         {
 
-            movie = mapper.Map<Entities.Movie>(item);
+            movie = mapper.Map<Entities.Movie>(result);
 
             var added = appDbContext.Movies.Add(movie);
 
@@ -137,26 +125,26 @@ public class MoviesController : ApiControllerBase
             logger.LogInformation("Movie added: {title} ({trackId};{country})", movie.TrackName, movie.TrackId, movie.Country);
         }
 
-        if (item.CollectionId > 0)
+        if (result.CollectionId > 0)
         {
             Guid collectionId;
 
             var collection = await appDbContext.Collections
-                .Where(x => x.CollectionId == item.CollectionId)
+                .Where(x => x.CollectionId == result.CollectionId)
                 .FirstOrDefaultAsync();
 
             if (collection == null)
             {
                 collection = new()
                 {
-                    CollectionArtistId = item.CollectionArtistId,
-                    CollectionArtistViewUrl = item.CollectionArtistViewUrl,
-                    CollectionCensoredName = item.CollectionCensoredName,
-                    CollectionHdPrice = item.CollectionHdPrice,
-                    CollectionId = item.CollectionId,
-                    CollectionName = item.CollectionName,
-                    CollectionPrice = item.CollectionPrice,
-                    CollectionViewUrl = item.CollectionViewUrl,
+                    CollectionArtistId = result.CollectionArtistId,
+                    CollectionArtistViewUrl = result.CollectionArtistViewUrl,
+                    CollectionCensoredName = result.CollectionCensoredName,
+                    CollectionHdPrice = result.CollectionHdPrice,
+                    CollectionId = result.CollectionId,
+                    CollectionName = result.CollectionName,
+                    CollectionPrice = result.CollectionPrice,
+                    CollectionViewUrl = result.CollectionViewUrl,
                 };
 
                 var addedCollection = appDbContext.Collections.Add(collection);
@@ -164,14 +152,14 @@ public class MoviesController : ApiControllerBase
             }
             else
             {
-                collection.CollectionArtistId = item.CollectionArtistId;
-                collection.CollectionArtistViewUrl = item.CollectionArtistViewUrl;
-                collection.CollectionCensoredName = item.CollectionCensoredName;
-                collection.CollectionHdPrice = item.CollectionHdPrice;
-                collection.CollectionId = item.CollectionId;
-                collection.CollectionName = item.CollectionName;
-                collection.CollectionPrice = item.CollectionPrice;
-                collection.CollectionViewUrl = item.CollectionViewUrl;
+                collection.CollectionArtistId = result.CollectionArtistId;
+                collection.CollectionArtistViewUrl = result.CollectionArtistViewUrl;
+                collection.CollectionCensoredName = result.CollectionCensoredName;
+                collection.CollectionHdPrice = result.CollectionHdPrice;
+                collection.CollectionId = result.CollectionId;
+                collection.CollectionName = result.CollectionName;
+                collection.CollectionPrice = result.CollectionPrice;
+                collection.CollectionViewUrl = result.CollectionViewUrl;
 
                 collectionId = collection.Id;
             }
