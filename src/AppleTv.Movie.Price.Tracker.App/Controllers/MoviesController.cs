@@ -78,7 +78,7 @@ public class MoviesController : ApiControllerBase
     {
         UntrackMovieCommand command = new() { Id = movieId };
 
-        var result = mediator.Send(command);
+        var result = await mediator.Send(command);
 
         return Accepted(result);
     }
