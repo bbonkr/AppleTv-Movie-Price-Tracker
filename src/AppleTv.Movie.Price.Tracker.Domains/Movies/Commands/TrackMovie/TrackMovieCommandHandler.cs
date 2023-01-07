@@ -184,6 +184,7 @@ public class TrackMovieCommandHandler : IRequestHandler<TrackMovieCommand, Movie
                         TrackHdPrice = result.TrackHdPrice,
                         TrackRentalPrice = result.TrackRentalPrice,
                         TrackHdRentalPrice = result.TrackHdRentalPrice,
+                        Created = DateTimeOffset.UtcNow,
                     });
 
                     logger.LogInformation(@"[{className}][{methodName}] {MovieTitle}

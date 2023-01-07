@@ -2,6 +2,7 @@
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Commands.TrackMovie;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Commands.UntrackMovie;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Models;
+using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.GetMovieById;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.GetMovies;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.LookupMovie;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.SearchMovies;
@@ -31,6 +32,16 @@ public class MoviesController : ApiControllerBase
     [HttpGet]
     public async Task<ActionResult<MoviesPagedModel>> GetMovies([FromQuery] GetMoviesQuery query)
     {
+        var result = await mediator.Send(query);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<MovieModel>> GetMovie([FromRoute] Guid id)
+    {
+        GetMovieByIdQuery query = new(id);
         var result = await mediator.Send(query);
 
         return Ok(result);
