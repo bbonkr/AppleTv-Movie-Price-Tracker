@@ -10,7 +10,6 @@ public class LookupMovieQuery : IRequest<ITunesSearchResultItemModel>
         TrackId = trackId;
         Country = country;
     }
-
     public long TrackId { get; private set; }
     public string Country { get; private set; }
     public string Language { get; set; } = "ko_kr";

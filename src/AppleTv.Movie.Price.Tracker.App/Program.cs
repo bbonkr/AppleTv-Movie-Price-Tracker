@@ -34,11 +34,10 @@ builder.Services
     .AddMoviePriceCollectJbo(builder.Configuration)
     .AddJsonOptions()
     .AddEndpointsApiExplorer()
+    .AddIdentityServerAuthentication()
+    .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions)
     .AddMappingProfiles()
     .AddValidatorIntercepter()
-    .AddIdentityServerAuthentication()
-    //.AddApiVersioningAndSwaggerGen(apiVersion)
-    .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions)
     .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
     .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly });
 
@@ -63,6 +62,6 @@ app.UseCors(Constants.DEFAULT_CORS_POLICY);
 app.MapControllers()
     .RequireAuthorization();
 
-//await app.RunStartupJobsAync();
+// await app.RunStartupJobsAync();
 
 app.Run();

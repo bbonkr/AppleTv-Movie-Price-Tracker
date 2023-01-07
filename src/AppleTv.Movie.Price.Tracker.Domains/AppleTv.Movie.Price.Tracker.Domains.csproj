@@ -38,7 +38,9 @@
     <Folder Include="Movies\Queries\GetMovies\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Data.SqlServer\AppleTv.Movie.Price.Tracker.Data.SqlServer.csproj" />
-    <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj" />
+    <ProjectReference
+      Include="..\AppleTv.Movie.Price.Tracker.Data.SqlServer\AppleTv.Movie.Price.Tracker.Data.SqlServer.csproj" />
+    <ProjectReference
+      Include="..\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,10 @@ namespace AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.GetMovies;
 
 public class GetMoviesQueryHandler : IRequestHandler<GetMoviesQuery, MoviesPagedModel?>
 {
-    public GetMoviesQueryHandler(AppDbContext context, IMapper mapper, ILogger<GetMoviesQueryHandler> logger)
+    public GetMoviesQueryHandler(
+        AppDbContext context,
+        IMapper mapper,
+        ILogger<GetMoviesQueryHandler> logger)
     {
         this.context = context;
         this.mapper = mapper;

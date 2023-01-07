@@ -13,7 +13,9 @@
     <PackageReference Include="CronScheduler.AspNetCore" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj" />
-    <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Data\AppleTv.Movie.Price.Tracker.Data.csproj" />
+    <ProjectReference
+      Include="..\AppleTv.Movie.Price.Tracker.Domains\AppleTv.Movie.Price.Tracker.Domains.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>
