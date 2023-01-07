@@ -15,6 +15,8 @@ public class MovieMappingProfile : Profile
         CreateMap<Entities.Movie, MovieModel>();
 
         CreateMap<Entities.Movie, MovieListItemModel>();
+
+        CreateMap<Entities.Movie, MovieSimpleModel>();
     }
 }
 

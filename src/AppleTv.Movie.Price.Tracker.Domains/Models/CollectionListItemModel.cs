@@ -17,4 +17,6 @@ public class CollectionListItemModel
     public decimal CollectionPrice { get; set; }
 
     public decimal CollectionHdPrice { get; set; }
+
+    public List<MovieSimpleModel> Movies { get; set; } = new();
 }
