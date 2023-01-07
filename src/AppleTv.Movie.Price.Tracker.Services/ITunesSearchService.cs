@@ -13,29 +13,36 @@ public class ITunesSearchService
     private const string SearchUrl = "https://itunes.apple.com/search";
     private const string LookupUrl = "https://itunes.apple.com/{0}/lookup";
 
-    public ITunesSearchService(HttpClient client, IOptionsMonitor<JsonSerializerOptions> jsonSerializerOptionsAccessor, ILogger<ITunesSearchService> logger)
+    public const uint LIMIT = 25;
+
+    public ITunesSearchService(
+        HttpClient client,
+        IOptionsMonitor<JsonSerializerOptions> jsonSerializerOptionsAccessor,
+        ILogger<ITunesSearchService> logger)
     {
         this.client = client;
         this.logger = logger;
-        this.jsonSerializerOptions = jsonSerializerOptionsAccessor.CurrentValue ?? throw new ArgumentNullException();
+        jsonSerializerOptions = jsonSerializerOptionsAccessor.CurrentValue ?? throw new ArgumentNullException(nameof(jsonSerializerOptionsAccessor));
     }
 
-    public async Task<ITunesSearchResultModel> SearchAsync(string term, string storeCountry, string language, int limit = 25, CancellationToken cancellationToken = default)
+    public async Task<ITunesSearchResultModel> SearchMoviesAsync(string term, string storeCountry, string language, int limit = (int)LIMIT, CancellationToken cancellationToken = default)
     {
         var storeCountryCode = storeCountry.Trim().ToLower();
         var languageCode = language.Trim().Replace('-', '_');
 
-        List<string> queries = new();
-        queries.Add($"term={term.Trim().Replace(' ', '+')}");
-        queries.Add($"country={storeCountryCode}");
-        queries.Add($"lang={languageCode}");
-        queries.Add($"media=movie");
-        queries.Add($"entity=movie");
-        queries.Add($"attribute=movieArtistTerm");
+        List<string> queries = new() {
+            $"term={term.Trim().Replace(' ', '+')}",
+            $"country={storeCountryCode}",
+            $"lang={languageCode}",
+            $"media=movie",
+            $"entity=movie",
+            $"attribute=movieTerm",
+        };
+
 
         var url = GenerateUrl(SearchUrl, queries);
 
-        var response = await client.GetAsync(url);
+        var response = await client.GetAsync(url, cancellationToken: cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {
@@ -54,24 +61,26 @@ public class ITunesSearchService
         {
             logger.LogWarning("[{className}][{methodName}]: ({statusCode}) {reasonPhrase}",
                 nameof(ITunesSearchService),
-                nameof(SearchAsync),
+                nameof(SearchMoviesAsync),
                 response.StatusCode,
                 response.ReasonPhrase);
             throw new ApiException(response.StatusCode, response.ReasonPhrase);
         }
     }
 
-    public async Task<ITunesSearchResultModel> LookupAsync(long id, string storeCountry, string language, CancellationToken cancellationToken = default)
+    public async Task<ITunesSearchResultItemModel?> LookupMovieAsync(long id, string storeCountry, string language, CancellationToken cancellationToken = default)
     {
         var storeCountryCode = storeCountry.Trim().ToLower();
         var languageCode = language.Trim().Replace('-', '_');
 
-        List<string> queries = new();
-        queries.Add($"id={id}");
+        List<string> queries = new()
+        {
+            $"id={id}",
+         };
 
         var url = GenerateUrl(string.Format(LookupUrl, storeCountry.Trim().ToLower()), queries);
 
-        var response = await client.GetAsync(url);
+        var response = await client.GetAsync(url, cancellationToken: cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {
@@ -84,13 +93,13 @@ public class ITunesSearchService
                 item.LanguageCode = languageCode;
             }
 
-            return result;
+            return result.results.FirstOrDefault();
         }
         else
         {
             logger.LogWarning("[{className}][{methodName}]: ({statusCode}) {reasonPhrase}",
                 nameof(ITunesSearchService),
-                nameof(LookupAsync),
+                nameof(LookupMovieAsync),
                 response.StatusCode,
                 response.ReasonPhrase);
 
@@ -100,7 +109,7 @@ public class ITunesSearchService
 
     private string GenerateUrl(string baseUrl, IEnumerable<string> queries)
     {
-        StringBuilder urlBuilder = new StringBuilder();
+        StringBuilder urlBuilder = new();
         urlBuilder.Append(baseUrl);
 
         if (queries.Any())

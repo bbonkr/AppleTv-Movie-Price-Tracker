@@ -7,8 +7,7 @@ public class MoviePriceMappingProfile : Profile
 {
     public MoviePriceMappingProfile()
     {
-        CreateMap<Entities.MoviePrice, MoviePriceModel>()
-            .ReverseMap();
+        CreateMap<Entities.MoviePrice, MoviePriceModel>();
     }
 }
 

@@ -15,7 +15,8 @@
     <PackageReference Include="kr.bbon.EntityFrameworkCore.Extensions" Version="1.5.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Entities\AppleTv.Movie.Price.Tracker.Entities.csproj" />
+    <ProjectReference
+      Include="..\AppleTv.Movie.Price.Tracker.Entities\AppleTv.Movie.Price.Tracker.Entities.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EntityTypeConfigurations\" />

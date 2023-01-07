@@ -1,3 +1,4 @@
+using AppleTv.Movie.Price.Tracker.App;
 using AppleTv.Movie.Price.Tracker.App.Extensions.DependencyInjection;
 using AppleTv.Movie.Price.Tracker.App.Options;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
@@ -20,7 +21,9 @@ builder.Services.ConfigureAppOptions();
 builder.Services.AddControllers(mvcOptions =>
 {
     mvcOptions.Filters.Add<kr.bbon.AspNetCore.Filters.ApiExceptionHandlerFilter>();
-}).ConfigureCustomApiBehaviorOptions();
+})
+    .ConfigureCustomApiBehaviorOptions()
+    .ConfigureDefaultXmlOptions();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
@@ -31,11 +34,10 @@ builder.Services
     .AddMoviePriceCollectJbo(builder.Configuration)
     .AddJsonOptions()
     .AddEndpointsApiExplorer()
+    .AddIdentityServerAuthentication()
+    .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions)
     .AddMappingProfiles()
     .AddValidatorIntercepter()
-    .AddIdentityServerAuthentication()
-    //.AddApiVersioningAndSwaggerGen(apiVersion)
-    .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions)
     .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
     .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly });
 
@@ -60,6 +62,6 @@ app.UseCors(Constants.DEFAULT_CORS_POLICY);
 app.MapControllers()
     .RequireAuthorization();
 
-//await app.RunStartupJobsAync();
+// await app.RunStartupJobsAync();
 
 app.Run();
