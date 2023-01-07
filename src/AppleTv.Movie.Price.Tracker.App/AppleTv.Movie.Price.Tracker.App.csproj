@@ -59,21 +59,6 @@
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
 		<ProjectReference
-			Include="..\AppleTv.Movie.Price.Tracker.Data\AppleTv.Movie.Price.Tracker.Data.csproj">
-			<GlobalPropertiesToRemove>
-			</GlobalPropertiesToRemove>
-		</ProjectReference>
-		<ProjectReference
-			Include="..\AppleTv.Movie.Price.Tracker.Services\AppleTv.Movie.Price.Tracker.Services.csproj">
-			<GlobalPropertiesToRemove>
-			</GlobalPropertiesToRemove>
-		</ProjectReference>
-		<ProjectReference
-			Include="..\AppleTv.Movie.Price.Tracker.Data.SqlServer\AppleTv.Movie.Price.Tracker.Data.SqlServer.csproj">
-			<GlobalPropertiesToRemove>
-			</GlobalPropertiesToRemove>
-		</ProjectReference>
-		<ProjectReference
 			Include="..\AppleTv.Movie.Price.Tracker.Domains\AppleTv.Movie.Price.Tracker.Domains.csproj">
 			<GlobalPropertiesToRemove></GlobalPropertiesToRemove>
 		</ProjectReference>
