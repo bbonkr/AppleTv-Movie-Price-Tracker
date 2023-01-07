@@ -19,7 +19,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -38,11 +37,19 @@ public static class ServiceCollectionExtensions
                     cfg.GetSection(MoviePriceCollectJobOptions.Name).Bind(opt);
                 });
 
-            builder.Services.AddRequiredServices(ServiceLifetime.Singleton);
-            builder.Services.AddAppDbContext(configuration, ServiceLifetime.Singleton, ServiceLifetime.Singleton);
-            builder.Services.AddJsonOptions();
-            builder.Services.AddMappingProfiles();
+            builder.Services
+                .AddRequiredServices(ServiceLifetime.Singleton)
+                .AddAppDbContext(configuration, ServiceLifetime.Singleton, ServiceLifetime.Singleton)
+                .AddJsonOptions()
+                .AddMappingProfiles()
+                .AddMappingProfiles()
+                .AddValidatorIntercepter()
+                .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
+                .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly });
+
             builder.AddJob<MoviePriceCollectJob, MoviePriceCollectJobOptions>();
+
+
 
             // register a custom error processing for internal errors
             builder.AddUnobservedTaskExceptionHandler(sp =>

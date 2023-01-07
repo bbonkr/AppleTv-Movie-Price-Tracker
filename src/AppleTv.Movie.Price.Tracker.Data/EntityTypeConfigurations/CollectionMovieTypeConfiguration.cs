@@ -18,12 +18,12 @@ public class CollectionMovieTypeConfiguration : IEntityTypeConfiguration<Entitie
             .IsRequired()
             .HasConversion<string>();
 
-        builder.HasOne(x => x.Collection)
-        .WithMany(x => x.CollectionMovies)
-        .HasForeignKey(x => x.CollectionId);
+        // builder.HasOne(x => x.Collection)
+        // .WithMany(x => x.CollectionMovies)
+        // .HasForeignKey(x => x.CollectionId);
 
-        builder.HasOne(x => x.Movie)
-        .WithMany(x => x.CollectionMovies)
-        .HasForeignKey(x => x.MovieId);
+        // builder.HasOne(x => x.Movie)
+        // .WithMany(x => x.CollectionMovies)
+        // .HasForeignKey(x => x.MovieId);
     }
 }

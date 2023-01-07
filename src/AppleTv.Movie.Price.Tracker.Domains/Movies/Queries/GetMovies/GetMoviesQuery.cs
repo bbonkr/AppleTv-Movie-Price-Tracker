@@ -1,7 +1,5 @@
 ﻿using System;
-using AppleTv.Movie.Price.Tracker.Domains.Models;
 using AppleTv.Movie.Price.Tracker.Domains.Movies.Models;
-using kr.bbon.Core.Models;
 using MediatR;
 
 namespace AppleTv.Movie.Price.Tracker.Domains.Movies.Queries.GetMovies;

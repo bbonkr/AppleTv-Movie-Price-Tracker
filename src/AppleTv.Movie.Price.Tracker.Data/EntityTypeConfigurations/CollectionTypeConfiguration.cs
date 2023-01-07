@@ -28,5 +28,16 @@ public class CollectionTypeConfiguration : IEntityTypeConfiguration<Entities.Col
         .HasConversion<decimal>()
         .HasDefaultValue(0);
 
+
+        builder.HasMany(x => x.Movies)
+            .WithMany(x => x.Collections)
+            .UsingEntity<CollectionMovie>(
+                x => x.HasOne(x => x.Movie).WithMany(x => x.CollectionMovies).HasForeignKey(x => x.MovieId),
+                x => x.HasOne(x => x.Collection).WithMany(x => x.CollectionMovies).HasForeignKey(x => x.CollectionId),
+                x =>
+                {
+                    x.HasKey(collectionMovie => new { collectionMovie.MovieId, collectionMovie.CollectionId });
+                }
+            );
     }
 }

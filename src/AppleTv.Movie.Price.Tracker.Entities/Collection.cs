@@ -19,4 +19,6 @@ public class Collection
     public decimal CollectionHdPrice { get; set; }
 
     public virtual ICollection<CollectionMovie> CollectionMovies { get; set; } = new HashSet<CollectionMovie>();
+
+    public virtual ICollection<Movie> Movies { get; set; } = new HashSet<Movie>();
 }
