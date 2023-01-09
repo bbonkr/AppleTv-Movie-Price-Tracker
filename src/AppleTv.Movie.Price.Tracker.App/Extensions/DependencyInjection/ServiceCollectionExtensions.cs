@@ -40,27 +40,40 @@ public static class ServiceCollectionExtensions
             builder.Services
                 .AddRequiredServices(ServiceLifetime.Singleton)
                 .AddAppDbContext(configuration, ServiceLifetime.Singleton, ServiceLifetime.Singleton)
-                .AddJsonOptions()
+                .AddRequiredOptions()
                 .AddMappingProfiles()
                 .AddMappingProfiles()
                 .AddValidatorIntercepter()
                 .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
-                .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly });
+                .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
+                .AddGitHubService();
 
             builder.AddJob<MoviePriceCollectJob, MoviePriceCollectJobOptions>();
-
-
 
             // register a custom error processing for internal errors
             builder.AddUnobservedTaskExceptionHandler(sp =>
             {
                 var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("CronJobs");
+                var gitHubService = sp.GetRequiredService<GitHubService>();
 
+                var cancellationToken = new CancellationTokenSource(10000).Token;
+                var labels = new List<string> { "bug", "help wanted" };
                 return (sender, args) =>
-                    {
-                        logger?.LogError(args.Exception?.Message);
-                        args.SetObserved();
-                    };
+                {
+                    gitHubService.CreateIssueFromExceptionAsync(
+                                        args.Exception,
+                                        null,
+                                        labels,
+                                        reopenIfClosedOneExists: true,
+                                        createNewIssueAlways: false,
+                                        cancellationToken: cancellationToken)
+                                        .GetAwaiter()
+                                        .GetResult();
+
+                    logger?.LogError("{message}", args.Exception?.Message);
+
+                    args.SetObserved();
+                };
             });
 
         });
@@ -74,10 +87,12 @@ public static class ServiceCollectionExtensions
 
         services.AddHttpClient<ITunesSearchService>();
 
+        // services.AddTransient<ApiExceptionHandlerWithGitHubIssueFilter>();
+
         return services;
     }
 
-    public static IServiceCollection AddJsonOptions(this IServiceCollection services)
+    public static IServiceCollection AddRequiredOptions(this IServiceCollection services)
     {
         services.AddOptions<JsonSerializerOptions>().Configure(options =>
         {
@@ -264,6 +279,18 @@ public static class ServiceCollectionExtensions
                 }
             });
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddGitHubService(this IServiceCollection services)
+    {
+        services.AddOptions<GitHubOptions>()
+            .Configure<IConfiguration>((options, configuration) =>
+            {
+                configuration.GetSection(GitHubOptions.Name).Bind(options);
+            });
+        services.AddTransient<GitHubService>();
 
         return services;
     }
