@@ -9,9 +9,10 @@ public static class WebApplicationExtensions
 {
     public static IApplicationBuilder UseDatabaseMigration(this IApplicationBuilder app)
     {
-        using var scope = app.ApplicationServices.CreateScope();
-        using var appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        using var appDbContext = app.ApplicationServices.GetRequiredService<AppDbContext>();
+
         appDbContext.Database.Migrate();
+
         return app;
     }
 

@@ -1,7 +1,9 @@
 using AppleTv.Movie.Price.Tracker.App;
 using AppleTv.Movie.Price.Tracker.App.Extensions.DependencyInjection;
+using AppleTv.Movie.Price.Tracker.App.Infrastructure.Filters;
 using AppleTv.Movie.Price.Tracker.App.Options;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
+using kr.bbon.Services.Extensions.DependencyInjection;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +22,7 @@ builder.Services.ConfigureAppOptions();
 
 builder.Services.AddControllers(mvcOptions =>
 {
-    mvcOptions.Filters.Add<kr.bbon.AspNetCore.Filters.ApiExceptionHandlerFilter>();
+    mvcOptions.Filters.Add<ApiExceptionHandlerWithGitHubIssueFilter>();
 })
     .ConfigureCustomApiBehaviorOptions()
     .ConfigureDefaultXmlOptions();
@@ -32,14 +34,16 @@ builder.Services
     .AddRequiredServices()
     .AddAppDbContext(builder.Configuration)
     .AddMoviePriceCollectJbo(builder.Configuration)
-    .AddJsonOptions()
+    .AddRequiredOptions()
     .AddEndpointsApiExplorer()
     .AddIdentityServerAuthentication()
     .AddSwaggerGenWithIdentityServer(apiVersion, identityServerOptions)
     .AddMappingProfiles()
     .AddValidatorIntercepter()
     .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
-    .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly });
+    .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
+    .AddGitHubService()
+;
 
 var app = builder.Build();
 
@@ -48,11 +52,8 @@ if (app.Environment.IsDevelopment())
 {
 }
 
-//app.UseSwaggerUIWithApiVersioning();
 app.UseSwaggerUIWithIdentityServer()
     .UseDatabaseMigration();
-
-// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -61,7 +62,5 @@ app.UseCors(Constants.DEFAULT_CORS_POLICY);
 
 app.MapControllers()
     .RequireAuthorization();
-
-// await app.RunStartupJobsAync();
 
 app.Run();

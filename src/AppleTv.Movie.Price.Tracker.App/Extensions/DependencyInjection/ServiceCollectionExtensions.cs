@@ -15,6 +15,8 @@ using FluentValidation.AspNetCore;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
 using kr.bbon.AspNetCore.Models;
 using kr.bbon.Core.Models;
+using kr.bbon.Services.Extensions.DependencyInjection;
+using kr.bbon.Services.GitHub;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +30,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMoviePriceCollectJbo(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScheduler((builder) =>
+        services.AddScheduler((SchedulerBuilder builder) =>
         {
             builder.Services
                 .AddOptions<MoviePriceCollectJobOptions>()
@@ -40,27 +42,48 @@ public static class ServiceCollectionExtensions
             builder.Services
                 .AddRequiredServices(ServiceLifetime.Singleton)
                 .AddAppDbContext(configuration, ServiceLifetime.Singleton, ServiceLifetime.Singleton)
-                .AddJsonOptions()
+                .AddRequiredOptions()
                 .AddMappingProfiles()
                 .AddMappingProfiles()
                 .AddValidatorIntercepter()
                 .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
-                .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly });
+                .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
+                .AddGitHubService();
 
             builder.AddJob<MoviePriceCollectJob, MoviePriceCollectJobOptions>();
-
-
 
             // register a custom error processing for internal errors
             builder.AddUnobservedTaskExceptionHandler(sp =>
             {
-                var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("CronJobs");
 
                 return (sender, args) =>
+                {
+                    var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("CronJobs");
+                    var gitHubService = sp.GetRequiredService<GitHubService>();
+
+                    var cancellationToken = new CancellationTokenSource(10000).Token;
+
+                    Exception exception = args.Exception;
+                    if (args.Exception is AggregateException aggregateException)
                     {
-                        logger?.LogError(args.Exception?.Message);
-                        args.SetObserved();
-                    };
+                        if (aggregateException.InnerExceptions.Any())
+                        {
+                            exception = aggregateException.InnerExceptions.First();
+                        }
+                    }
+
+                    gitHubService?.CreateIssueFromExceptionAsync(
+                                        exception,
+                                        null,
+                                        Constants.ISSUE_LABELS,
+                                        cancellationToken: cancellationToken)
+                                        .GetAwaiter()
+                                        .GetResult();
+
+                    logger?.LogError("{message}", args.Exception?.Message);
+
+                    args.SetObserved();
+                };
             });
 
         });
@@ -77,7 +100,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddJsonOptions(this IServiceCollection services)
+    public static IServiceCollection AddRequiredOptions(this IServiceCollection services)
     {
         services.AddOptions<JsonSerializerOptions>().Configure(options =>
         {
@@ -121,7 +144,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddIdentityServerAuthentication(this IServiceCollection services)
     {
         var identityServer4Options = new IdentityServerOptions();
-        // configuration.GetSection(IdentityServer4Options.Name).Bind(identityServer4Options);
 
         services.AddOptions<IdentityServerOptions>()
             .Configure<IConfiguration>((options, configuration) =>
@@ -169,16 +191,6 @@ public static class ServiceCollectionExtensions
                     }
                 };
             });
-        // .AddIdentityServerAuthentication("Bearer", options =>
-        // {
-        //     // required audience of access tokens
-        //     options.ApiName = identityServer4Options.ApiName;
-        //     // auth server base endpoint (this will be used to search for disco doc)
-        //     options.Authority = identityServer4Options.Issuer;
-        //     options.NameClaimType = ClaimTypes.NameIdentifier;
-        //     options.RoleClaimType = ClaimTypes.Role;
-        //     options.RequireHttpsMetadata = false;
-        // });
 
         return services;
     }
