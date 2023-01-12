@@ -21,7 +21,7 @@ public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, Movie
 
         MovieSearchPagedModel model = new();
         model.SetInformation(1, ITunesSearchService.LIMIT, (ulong)result.ResultCount, 1);
-        model.SetItems(result.results);
+        model.SetItems(result.Results);
 
         return model;
     }
