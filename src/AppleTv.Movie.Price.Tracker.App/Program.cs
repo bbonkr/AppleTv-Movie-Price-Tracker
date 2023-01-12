@@ -42,7 +42,8 @@ builder.Services
     .AddValidatorIntercepter()
     .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
     .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
-    .AddGitHubService();
+    .AddGitHubService()
+    ;
 
 var app = builder.Build();
 

@@ -5,14 +5,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CronScheduler.AspNetCore" Version="3.1.0" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference
       Include="..\AppleTv.Movie.Price.Tracker.Domains\AppleTv.Movie.Price.Tracker.Domains.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CronScheduler.Extensions" Version="3.1.0" />
   </ItemGroup>
 </Project>
