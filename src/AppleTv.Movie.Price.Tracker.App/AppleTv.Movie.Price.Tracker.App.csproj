@@ -14,6 +14,7 @@
 	<PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
 	<PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
 	<ItemGroup>
+		<PackageReference Include="kr.bbon.Services" Version="1.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
@@ -23,44 +24,18 @@
 		</PackageReference>
 		<PackageReference Include="kr.bbon.AspNetCore" Version="1.4.0" />
 		<PackageReference Include="kr.bbon.EntityFrameworkCore.Extensions" Version="1.5.3" />
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
-			Version="12.0.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
-		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection"
-			Version="11.0.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 	</ItemGroup>
+
 	<ItemGroup>
-		<None Remove="Extensions\" />
-		<None Remove="Extensions\DependencyInjection\" />
-		<None Remove="Microsoft.EntityFrameworkCore.Design" />
-		<None Remove="kr.bbon.AspNetCore" />
-		<None Remove="kr.bbon.EntityFrameworkCore.Extensions" />
-		<None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
-		<None Remove="Options\" />
-		<None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
-		<None Remove="FluentValidation.AspNetCore" />
-		<None Remove="Infrastructure\" />
-		<None Remove="Infrastructure\Swagger\" />
-		<None Remove="Infrastructure\Validations\" />
-		<None Remove="MediatR.Extensions.Microsoft.DependencyInjection" />
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Extensions\" />
-		<Folder Include="Extensions\DependencyInjection\" />
-		<Folder Include="Options\" />
-		<Folder Include="Infrastructure\" />
-		<Folder Include="Infrastructure\Swagger\" />
-		<Folder Include="Infrastructure\Validations\" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference
-			Include="..\AppleTv.Movie.Price.Tracker.Jobs\AppleTv.Movie.Price.Tracker.Jobs.csproj">
+		<ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Jobs\AppleTv.Movie.Price.Tracker.Jobs.csproj">
 			<GlobalPropertiesToRemove>
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
-		<ProjectReference
-			Include="..\AppleTv.Movie.Price.Tracker.Domains\AppleTv.Movie.Price.Tracker.Domains.csproj">
+		<ProjectReference Include="..\AppleTv.Movie.Price.Tracker.Domains\AppleTv.Movie.Price.Tracker.Domains.csproj">
 			<GlobalPropertiesToRemove></GlobalPropertiesToRemove>
 		</ProjectReference>
 	</ItemGroup>

@@ -22,9 +22,6 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
             "launchBrowser": {
                 "enabled": true,
                 "args": "${auto-detect-url}/swagger",

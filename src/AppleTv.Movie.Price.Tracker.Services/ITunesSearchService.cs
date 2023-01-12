@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.Json;
-using System.Threading;
 using AppleTv.Movie.Price.Tracker.Services.Models;
 using kr.bbon.Core.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -49,7 +48,7 @@ public class ITunesSearchService
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var result = JsonSerializer.Deserialize<ITunesSearchResultModel>(json, jsonSerializerOptions) ?? new ITunesSearchResultModel { ResultCount = 0 };
 
-            foreach (var item in result.results)
+            foreach (var item in result.Results)
             {
                 item.CountryCode = storeCountryCode;
                 item.LanguageCode = languageCode;
@@ -87,13 +86,13 @@ public class ITunesSearchService
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var result = JsonSerializer.Deserialize<ITunesSearchResultModel>(json, jsonSerializerOptions) ?? new ITunesSearchResultModel { ResultCount = 0 };
 
-            foreach (var item in result.results)
+            foreach (var item in result.Results)
             {
                 item.CountryCode = storeCountryCode;
                 item.LanguageCode = languageCode;
             }
 
-            return result.results.FirstOrDefault();
+            return result.Results.FirstOrDefault();
         }
         else
         {

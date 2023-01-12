@@ -1,7 +1,7 @@
 using AppleTv.Movie.Price.Tracker.Services;
-using AppleTv.Movie.Price.Tracker.Services.Exceptions;
 using kr.bbon.AspNetCore.Filters;
 using kr.bbon.Core.Exceptions;
+using kr.bbon.Services.GitHub;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AppleTv.Movie.Price.Tracker.App.Infrastructure.Filters;
@@ -22,8 +22,6 @@ public class ApiExceptionHandlerWithGitHubIssueFilter : ApiExceptionHandlerFilte
                 var method = context.HttpContext.Request.Method;
                 var path = context.HttpContext.Request.Path;
 
-                var labels = new string[] { "bug", "help wanted" };
-
                 var cancellationToken = new CancellationTokenSource(10000).Token;
 
                 if (context.Exception is ApiException apiException)
@@ -37,9 +35,7 @@ public class ApiExceptionHandlerWithGitHubIssueFilter : ApiExceptionHandlerFilte
                         gitHubService.CreateIssueFromApiExceptionAsync(
                             apiException,
                             $"{method.ToUpper()}: {path}",
-                            labels,
-                            reopenIfClosedOneExists: true,
-                            createNewIssueAlways: false,
+                            Constants.ISSUE_LABELS,
                             cancellationToken: cancellationToken)
                             .GetAwaiter()
                             .GetResult();
@@ -50,9 +46,7 @@ public class ApiExceptionHandlerWithGitHubIssueFilter : ApiExceptionHandlerFilte
                     gitHubService.CreateIssueFromExceptionAsync(
                         context.Exception,
                         $"{method.ToUpper()}: {path}",
-                        labels,
-                        reopenIfClosedOneExists: true,
-                        createNewIssueAlways: false,
+                        Constants.ISSUE_LABELS,
                         cancellationToken: cancellationToken)
                         .GetAwaiter()
                         .GetResult();

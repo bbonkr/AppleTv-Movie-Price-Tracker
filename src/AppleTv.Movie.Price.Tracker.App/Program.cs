@@ -3,7 +3,7 @@ using AppleTv.Movie.Price.Tracker.App.Extensions.DependencyInjection;
 using AppleTv.Movie.Price.Tracker.App.Infrastructure.Filters;
 using AppleTv.Movie.Price.Tracker.App.Options;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
-using kr.bbon.AspNetCore.Filters;
+using kr.bbon.Services.Extensions.DependencyInjection;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +23,6 @@ builder.Services.ConfigureAppOptions();
 builder.Services.AddControllers(mvcOptions =>
 {
     mvcOptions.Filters.Add<ApiExceptionHandlerWithGitHubIssueFilter>();
-    // mvcOptions.Filters.Add<ApiExceptionHandlerFilter>();
 })
     .ConfigureCustomApiBehaviorOptions()
     .ConfigureDefaultXmlOptions();
@@ -52,11 +51,8 @@ if (app.Environment.IsDevelopment())
 {
 }
 
-//app.UseSwaggerUIWithApiVersioning();
 app.UseSwaggerUIWithIdentityServer()
     .UseDatabaseMigration();
-
-// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -65,7 +61,5 @@ app.UseCors(Constants.DEFAULT_CORS_POLICY);
 
 app.MapControllers()
     .RequireAuthorization();
-
-// await app.RunStartupJobsAync();
 
 app.Run();

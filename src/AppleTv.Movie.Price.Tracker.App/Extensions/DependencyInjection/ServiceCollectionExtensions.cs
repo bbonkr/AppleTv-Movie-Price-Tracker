@@ -15,6 +15,8 @@ using FluentValidation.AspNetCore;
 using kr.bbon.AspNetCore.Extensions.DependencyInjection;
 using kr.bbon.AspNetCore.Models;
 using kr.bbon.Core.Models;
+using kr.bbon.Services.Extensions.DependencyInjection;
+using kr.bbon.Services.GitHub;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +30,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMoviePriceCollectJbo(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScheduler((builder) =>
+        services.AddScheduler((SchedulerBuilder builder) =>
         {
             builder.Services
                 .AddOptions<MoviePriceCollectJobOptions>()
@@ -46,7 +48,7 @@ public static class ServiceCollectionExtensions
                 .AddValidatorIntercepter()
                 .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
                 .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
-                .AddGitHubService();
+                .AddGitHubService(ServiceLifetime.Singleton);
 
             builder.AddJob<MoviePriceCollectJob, MoviePriceCollectJobOptions>();
 
@@ -57,15 +59,13 @@ public static class ServiceCollectionExtensions
                 var gitHubService = sp.GetRequiredService<GitHubService>();
 
                 var cancellationToken = new CancellationTokenSource(10000).Token;
-                var labels = new List<string> { "bug", "help wanted" };
+
                 return (sender, args) =>
                 {
                     gitHubService.CreateIssueFromExceptionAsync(
                                         args.Exception,
                                         null,
-                                        labels,
-                                        reopenIfClosedOneExists: true,
-                                        createNewIssueAlways: false,
+                                        Constants.ISSUE_LABELS,
                                         cancellationToken: cancellationToken)
                                         .GetAwaiter()
                                         .GetResult();
@@ -86,8 +86,6 @@ public static class ServiceCollectionExtensions
         services.Add(new ServiceDescriptor(typeof(ITunesSearchService), sp => sp.GetRequiredService<ITunesSearchService>(), serviceLifetime));
 
         services.AddHttpClient<ITunesSearchService>();
-
-        // services.AddTransient<ApiExceptionHandlerWithGitHubIssueFilter>();
 
         return services;
     }
@@ -136,7 +134,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddIdentityServerAuthentication(this IServiceCollection services)
     {
         var identityServer4Options = new IdentityServerOptions();
-        // configuration.GetSection(IdentityServer4Options.Name).Bind(identityServer4Options);
 
         services.AddOptions<IdentityServerOptions>()
             .Configure<IConfiguration>((options, configuration) =>
@@ -184,16 +181,6 @@ public static class ServiceCollectionExtensions
                     }
                 };
             });
-        // .AddIdentityServerAuthentication("Bearer", options =>
-        // {
-        //     // required audience of access tokens
-        //     options.ApiName = identityServer4Options.ApiName;
-        //     // auth server base endpoint (this will be used to search for disco doc)
-        //     options.Authority = identityServer4Options.Issuer;
-        //     options.NameClaimType = ClaimTypes.NameIdentifier;
-        //     options.RoleClaimType = ClaimTypes.Role;
-        //     options.RequireHttpsMetadata = false;
-        // });
 
         return services;
     }
@@ -279,18 +266,6 @@ public static class ServiceCollectionExtensions
                 }
             });
         });
-
-        return services;
-    }
-
-    public static IServiceCollection AddGitHubService(this IServiceCollection services)
-    {
-        services.AddOptions<GitHubOptions>()
-            .Configure<IConfiguration>((options, configuration) =>
-            {
-                configuration.GetSection(GitHubOptions.Name).Bind(options);
-            });
-        services.AddTransient<GitHubService>();
 
         return services;
     }

@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="CronScheduler.AspNetCore" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="CronScheduler.AspNetCore" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
