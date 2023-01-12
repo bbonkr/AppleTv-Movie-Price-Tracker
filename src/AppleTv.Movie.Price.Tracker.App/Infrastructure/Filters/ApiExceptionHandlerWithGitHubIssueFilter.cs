@@ -1,4 +1,3 @@
-using AppleTv.Movie.Price.Tracker.Services;
 using kr.bbon.AspNetCore.Filters;
 using kr.bbon.Core.Exceptions;
 using kr.bbon.Services.GitHub;
@@ -11,9 +10,10 @@ public class ApiExceptionHandlerWithGitHubIssueFilter : ApiExceptionHandlerFilte
     protected override void HandleException(ExceptionContext context)
     {
         base.HandleException(context);
+        var scope = context.HttpContext.RequestServices.CreateScope();
+        var loggerFactory = scope?.ServiceProvider.GetRequiredService<ILoggerFactory>();
+        var gitHubService = scope?.ServiceProvider.GetRequiredService<GitHubService>();
 
-        var gitHubService = context.HttpContext.RequestServices.GetRequiredService<GitHubService>();
-        var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory?.CreateLogger("ExceptionHandlerFilter");
         try
         {
@@ -22,35 +22,32 @@ public class ApiExceptionHandlerWithGitHubIssueFilter : ApiExceptionHandlerFilte
                 var method = context.HttpContext.Request.Method;
                 var path = context.HttpContext.Request.Path;
 
-                var cancellationToken = new CancellationTokenSource(10000).Token;
+                var cancellationToken = new CancellationTokenSource(5000).Token;
 
+                Action? gitHubServiceActioin = null;
                 if (context.Exception is ApiException apiException)
                 {
-                    // var method = context.ActionDescriptor?.ActionConstraints?.OfType<HttpMethodActionConstraint>().FirstOrDefault()?.HttpMethods.FirstOrDefault() ?? "UNKNOWN";
-                    // var controller = context.ActionDescriptor?.RouteValues["controller"] ?? "UNKNOWN-CONTROLLER";
-                    // var action = context.ActionDescriptor?.RouteValues["action"] ?? "UNKNOWN-ACTION";
-
                     if (500 <= (int)apiException.HttpStatusCode)
                     {
-                        gitHubService.CreateIssueFromApiExceptionAsync(
-                            apiException,
-                            $"{method.ToUpper()}: {path}",
-                            Constants.ISSUE_LABELS,
-                            cancellationToken: cancellationToken)
-                            .GetAwaiter()
-                            .GetResult();
+                        gitHubServiceActioin = new Action(async () =>
+                            await gitHubService.CreateIssueFromApiExceptionAsync(
+                                apiException,
+                                $"{method.ToUpper()}: {path}",
+                                Constants.ISSUE_LABELS,
+                                cancellationToken: cancellationToken));
                     }
                 }
                 else
                 {
-                    gitHubService.CreateIssueFromExceptionAsync(
-                        context.Exception,
-                        $"{method.ToUpper()}: {path}",
-                        Constants.ISSUE_LABELS,
-                        cancellationToken: cancellationToken)
-                        .GetAwaiter()
-                        .GetResult();
+                    gitHubServiceActioin = new Action(async () =>
+                        await gitHubService.CreateIssueFromExceptionAsync(
+                            context.Exception,
+                            $"{method.ToUpper()}: {path}",
+                            Constants.ISSUE_LABELS,
+                            cancellationToken: cancellationToken));
                 }
+
+                gitHubServiceActioin?.Invoke();
             }
         }
         catch (GitHubException ex)

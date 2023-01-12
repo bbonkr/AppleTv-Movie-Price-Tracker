@@ -59,6 +59,7 @@ public class MoviePriceCollectJob : IScheduledJob
         catch (Exception ex)
         {
             logger.LogError(ex, "{message}", ex.Message);
+            throw;
         }
         finally
         {

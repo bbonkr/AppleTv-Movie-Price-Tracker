@@ -48,22 +48,32 @@ public static class ServiceCollectionExtensions
                 .AddValidatorIntercepter()
                 .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
                 .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
-                .AddGitHubService(ServiceLifetime.Singleton);
+                .AddGitHubService();
 
             builder.AddJob<MoviePriceCollectJob, MoviePriceCollectJobOptions>();
 
             // register a custom error processing for internal errors
             builder.AddUnobservedTaskExceptionHandler(sp =>
             {
-                var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("CronJobs");
-                var gitHubService = sp.GetRequiredService<GitHubService>();
-
-                var cancellationToken = new CancellationTokenSource(10000).Token;
 
                 return (sender, args) =>
                 {
-                    gitHubService.CreateIssueFromExceptionAsync(
-                                        args.Exception,
+                    var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("CronJobs");
+                    var gitHubService = sp.GetRequiredService<GitHubService>();
+
+                    var cancellationToken = new CancellationTokenSource(10000).Token;
+
+                    Exception exception = args.Exception;
+                    if (args.Exception is AggregateException aggregateException)
+                    {
+                        if (aggregateException.InnerExceptions.Any())
+                        {
+                            exception = aggregateException.InnerExceptions.First();
+                        }
+                    }
+
+                    gitHubService?.CreateIssueFromExceptionAsync(
+                                        exception,
                                         null,
                                         Constants.ISSUE_LABELS,
                                         cancellationToken: cancellationToken)

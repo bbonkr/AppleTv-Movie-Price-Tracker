@@ -43,7 +43,7 @@ builder.Services
     .AddMediatR(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
     .AddAutoMapper(new System.Reflection.Assembly[] { typeof(AppleTv.Movie.Price.Tracker.Domains.Placeholder).Assembly })
     .AddGitHubService()
-    ;
+;
 
 var app = builder.Build();
 
