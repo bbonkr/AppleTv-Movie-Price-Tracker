@@ -18,7 +18,7 @@
 		<PackageReference Include="kr.bbon.Services" Version="1.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
 			<IncludeAssets>runtime; build;
 				native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
